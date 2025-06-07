@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <h1>📦 제품 목록</h1>
+
+    <!-- ✅ 관리자 전용 사용자 목록 링크 -->
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="mb-3">
+        <a class="btn btn-secondary" th:href="@{/admin/users}">👤 사용자 목록 보기</a>
+    </div>
+
+    <!-- ✅ 관리자만 Create 버튼 보이게 -->
+    <a class="btn btn-primary mb-3"
+       th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+       th:href="@{/products/new}">+ 새 제품 등록</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>브랜드</th>
+            <th>원산지</th>
+            <th>가격</th>
+            <!-- ✅ 관리자만 Actions 컬럼 보이게 -->
+            <th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${listProducts}">
+            <td th:text="${product.id}">1</td>
+            <td th:text="${product.name}">이름</td>
+            <td th:text="${product.brand}">브랜드</td>
+            <td th:text="${product.madeIn}">한국</td>
+            <td th:text="${product.price}">10000</td>
+            <!-- ✅ 관리자만 수정/삭제 버튼 보이게 -->
+            <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{'/products/edit/' + ${product.id}}">수정</a>
+                <a class="btn btn-sm btn-outline-danger"
+                   th:href="@{'/products/delete/' + ${product.id}}"
+                   onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
